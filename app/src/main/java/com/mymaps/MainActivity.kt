@@ -14,8 +14,7 @@ import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener
 import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 
 class MainActivity : AppCompatActivity(),
     OnMapReadyCallback,
@@ -31,10 +30,54 @@ class MainActivity : AppCompatActivity(),
     //se llama cuando el mapa ya esté creado
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        createMarker()
+        //createMarker()
+        createPolylines()
         map.setOnMyLocationButtonClickListener(this)  //suscribirse al listener
         map.setOnMyLocationClickListener(this)  //suscribirse al listener
         enableLocation()
+    }
+
+    private fun createPolylines() {
+        val polylinesOptions = PolylineOptions()
+            .add(LatLng(-31.4413, -64.1811))
+            .add(LatLng(-31.4419, -64.1824))
+            .add(LatLng(-31.4407, -64.1819))
+            .add(LatLng(-31.4398, -64.1815))
+            .add(LatLng(-31.4403, -64.1802))
+            .add(LatLng(-31.4408, -64.1785))
+            .add(LatLng(-31.4414, -64.1780))
+            .add(LatLng(-31.4415, -64.1792))
+            .add(LatLng(-31.4416, -64.1804))
+            .width(15f)
+            .color(ContextCompat.getColor(this, R.color.purple_500))
+
+        val polyline: Polyline = map.addPolyline(polylinesOptions)
+
+        polyline.isClickable = true
+        map.setOnPolylineClickListener { polyline -> changeColor(polyline) }
+
+/*
+        val pattern = listOf(Dot(), Gap(10f), Dash(50f), Gap(10f))
+        polyline.pattern = pattern
+*/
+
+/*
+        polyline.startCap = RoundCap()
+        polyline.endCap = CustomCap(BitmapDescriptorFactory.fromResource(R.drawable.the_end))
+        //BitmapDescriptorFactory -> no acepta vectores
+        //con un simple png funciona ok
+*/
+
+    }
+
+    private fun changeColor(polyline: Polyline) {
+        val color = (0..3).random()
+        when (color) {
+            0 -> polyline.color = ContextCompat.getColor(this, R.color.black)
+            1 -> polyline.color = ContextCompat.getColor(this, R.color.teal_200)
+            2 -> polyline.color = ContextCompat.getColor(this, R.color.purple_500)
+            3 -> polyline.color = ContextCompat.getColor(this, R.color.purple_700)
+        }
     }
 
     private fun createMarker() {
