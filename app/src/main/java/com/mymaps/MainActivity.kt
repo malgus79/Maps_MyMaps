@@ -9,12 +9,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMyLocationButtonClickListener {
 
     private lateinit var map: GoogleMap
 
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         createMarker()
+        map.setOnMyLocationButtonClickListener(this)  //suscribirse al listener
         enableLocation()
     }
 
@@ -118,5 +120,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             map.isMyLocationEnabled = false
             Toast.makeText(this, "Para activar la localizacion va a ajustes y acepta los permisos", Toast.LENGTH_LONG).show()
         }
+    }
+
+    //cada vez que se pulse en el radar del mapa se llama a esta fun
+    override fun onMyLocationButtonClick(): Boolean {
+        Toast.makeText(this, "Boton pulsado", Toast.LENGTH_LONG).show()
+        return true
     }
 }
