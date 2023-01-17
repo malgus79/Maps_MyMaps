@@ -1,7 +1,7 @@
 package com.mymaps
 
-import android.Manifest
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -10,12 +10,16 @@ import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener
+import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMyLocationButtonClickListener {
+class MainActivity : AppCompatActivity(),
+    OnMapReadyCallback,
+    OnMyLocationButtonClickListener,
+    OnMyLocationClickListener {
 
     private lateinit var map: GoogleMap
 
@@ -28,6 +32,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMyLocationButton
         map = googleMap
         createMarker()
         map.setOnMyLocationButtonClickListener(this)  //suscribirse al listener
+        map.setOnMyLocationClickListener(this)  //suscribirse al listener
         enableLocation()
     }
 
@@ -78,9 +83,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMyLocationButton
 
     //logica para solicitar los permisos al usuario
     private fun requestLocationPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        ) {
             //si entra aca -> volver a pedir los permisos porque ya los habia rechazado
-            Toast.makeText(this, "Ve a ajustes y acepta los permisos", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Ve a ajustes y acepta los permisos", Toast.LENGTH_SHORT).show()
         } else {
             //si no -> es porque es la primera vez vez que se le solicitan los permisos
             ActivityCompat.requestPermissions(
@@ -99,14 +108,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMyLocationButton
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        when(requestCode) {
+        when (requestCode) {
             REQUEST_CODE_LOCATION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                 //si acepto el permiso -> activar la ubicacion
                 map.isMyLocationEnabled = true
 
             } else {
-                Toast.makeText(this, "Para activar la localizacion va a ajustes y acepta los permisos", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this,
+                    "Para activar la localizacion va a ajustes y acepta los permisos",
+                    Toast.LENGTH_LONG
+                ).show()
             }
             else -> {}
         }
@@ -118,13 +131,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, OnMyLocationButton
         if (!::map.isInitialized) return  //si el mapa NO ha sido inicializado -> return
         if (!isLocationPermissionGranted()) {
             map.isMyLocationEnabled = false
-            Toast.makeText(this, "Para activar la localizacion va a ajustes y acepta los permisos", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                "Para activar la localizacion va a ajustes y acepta los permisos",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
     //cada vez que se pulse en el radar del mapa se llama a esta fun
     override fun onMyLocationButtonClick(): Boolean {
-        Toast.makeText(this, "Boton pulsado", Toast.LENGTH_LONG).show()
-        return true
+        Toast.makeText(this, "Boton pulsado", Toast.LENGTH_SHORT).show()
+        return false
+    }
+
+    //se llamara cuando se pulse en un punto "azul"
+    override fun onMyLocationClick(p0: Location) {
+        Toast.makeText(this, "Estas en ${p0.longitude}, ${p0.latitude}", Toast.LENGTH_SHORT).show()
     }
 }
