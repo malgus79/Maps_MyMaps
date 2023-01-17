@@ -1,5 +1,6 @@
 package com.mymaps
 
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -69,6 +70,7 @@ class MainActivity : AppCompatActivity(),
     //comprobar si realmente tiene los permisos -> si se encuentra activado entonces activar
     //la ubicacion en tiempo real
     //si no -> se le pide al usuario que los acepte
+    @SuppressLint("MissingPermission")
     private fun enableLocation() {
         if (!::map.isInitialized) return  //si el mapa NO ha sido inicializado -> return
 
@@ -101,6 +103,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     //capturar la respuesta de cuando el usuario acepta los permisos
+    @SuppressLint("MissingPermission")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -126,6 +129,7 @@ class MainActivity : AppCompatActivity(),
     }
 
     //cuando la aplicacion este en segundo plano y vuelva a la misma -> volver a comprobar si los permisos siguen activos
+    @SuppressLint("MissingPermission")
     override fun onResumeFragments() {
         super.onResumeFragments()
         if (!::map.isInitialized) return  //si el mapa NO ha sido inicializado -> return
